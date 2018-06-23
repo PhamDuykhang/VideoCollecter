@@ -12,11 +12,12 @@ public class ReadProperty {
 		this.prop = new Properties();
 		this.propertyName = "";
 	}
-	public static String getPropertyName() {
+	public String getPropertyName() {
 		return propertyName;
 	}
-	public static void setPropertyName(String propertyName) {
+	public  ReadProperty setPropertyName(String propertyName) {
 		ReadProperty.propertyName = propertyName;
+		return this;
 	}
 	public Properties readProperty() throws IOException {
 		Properties prob = new Properties();

@@ -22,11 +22,12 @@ public class VideoGenerateTest {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		VideoCapture camera = CreateCameraFromUrl.create("0");
 		assertThat(CreateCameraFromUrl.isWorking(camera, 1000, 2), Is.is(true));
+	
 	}
 	@Test (expected = IllegalArgumentException.class)
 	public void GivenInvalidUrlWhenCreateCameraThenExceptionBeThrown() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		VideoCapture camera = CreateCameraFromUrl.create("../tt/p.mp4");
+		VideoCapture camera = CreateCameraFromUrl.create("D:/BigDataVideoAnalyze/sample-video/sample.mp4");
 		CreateCameraFromUrl.isWorking(camera, 1000, 2);
 	}
 }
