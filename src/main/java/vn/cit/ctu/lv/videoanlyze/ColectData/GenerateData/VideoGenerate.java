@@ -1,14 +1,20 @@
 package vn.cit.ctu.lv.videoanlyze.ColectData.GenerateData;
 
+import java.sql.Timestamp;
+import java.util.Base64;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.Logger;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
-
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import vn.cit.ctu.lv.videoanlyze.ColectData.Util.CreateCameraFromUrl;
 import vn.cit.ctu.lv.videoanlyze.ColectData.callback.GenerateCallBack;
@@ -53,16 +59,27 @@ public class VideoGenerate implements Runnable {
 			logger.error("Camera id: "+ cameraID+ " with "+ cameraURL+" not working!!! ");
 		}
 		Mat frame = new Mat();
-		CreatData creatdata = new CreatData();
+		Gson gson = new Gson();
 		while(camera.read(frame)) {
-			String data =creatdata.setFrame(frame)
-				.setHeight(480)
-				.setWith(640)
-				.create();
-			logger.info("Sending!! "+data);
+			Imgproc.resize(frame, frame, new Size(640, 480), 0, 0, Imgproc.INTER_CUBIC);
+			int cols = frame.cols();
+	        int rows = frame.rows();
+	        int type = frame.type();
+			byte[] data = new byte[(int) (frame.total() * frame.channels())];
+			frame.get(0, 0, data);
+	        String timestamp = new Timestamp(System.currentTimeMillis()).toString();
+			JsonObject obj = new JsonObject();
+			obj.addProperty("cameraId",cameraID);
+	        obj.addProperty("timestamp", timestamp);
+	        obj.addProperty("rows", rows);
+	        obj.addProperty("cols", cols);
+	        obj.addProperty("type", type);
+	        obj.addProperty("data", Base64.getEncoder().encodeToString(data));  
+	        String json = gson.toJson(obj);
+			logger.info("Sending!! "+json);
 		
-			producer.send(new ProducerRecord<String, String>(topiname,cameraID,data),new GenerateCallBack(cameraID));
-			creatdata.clean();			
+			producer.send(new ProducerRecord<String, String>(topiname,cameraID,json),new GenerateCallBack(cameraID));
+//			creatdata.clean();			
 		}
 		camera.release();
 		frame.release();

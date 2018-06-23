@@ -1,7 +1,11 @@
 package vn.cit.ctu.lv.videoanlyze.ColectData.GenerateData;
 
+import java.awt.Frame;
+import java.util.Base64;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
 import vn.cit.ctu.lv.videoanlyze.ColectData.Util.CreateCameraFromUrl;
@@ -13,12 +17,14 @@ public class TestRead {
 		System.out.println(video.isOpened());
 		Mat mat = new Mat();
 		CreatData creatData = new CreatData();
+		int i=0;
 		while(video.read(mat)) {
 			String data =creatData.setFrame(mat)
-					.setHeight(480)
-					.setWith(640)
-					.create();
+				.setHeight(480)
+				.setWith(640)
+				.create();
 			System.out.println(data);
+			
 		}
 		
 	}
