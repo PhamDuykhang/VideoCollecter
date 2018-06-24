@@ -13,19 +13,22 @@ import vn.cit.ctu.lv.videoanlyze.ColectData.Util.CreateCameraFromUrl;
 public class TestRead {
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		VideoCapture video = CreateCameraFromUrl.create("0");
+		VideoCapture video = new VideoCapture();
+	
 		System.out.println(video.isOpened());
-		Mat mat = new Mat();
-		CreatData creatData = new CreatData();
-		int i=0;
-		while(video.read(mat)) {
-			String data =creatData.setFrame(mat)
-				.setHeight(480)
-				.setWith(640)
-				.create();
-			System.out.println(data);
-			
-		}
-		
+//		VideoCapture video = CreateCameraFromUrl.create("D:/BigDataVideoAnalyze/sample-video/sample.mp4");
+//		System.out.println(video.isOpened());
+//		Mat mat = new Mat();
+//		CreatData creatData = new CreatData();
+//		int i=0;
+//		while(video.read(mat)) {
+//			String data =creatData.setFrame(mat)
+//				.setHeight(480)
+//				.setWith(640)
+//				.create();
+//			System.out.println(data);
+//			
+//		}
+//		
 	}
 }

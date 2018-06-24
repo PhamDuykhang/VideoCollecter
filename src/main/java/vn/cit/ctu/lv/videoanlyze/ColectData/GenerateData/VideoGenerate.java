@@ -1,5 +1,8 @@
 package vn.cit.ctu.lv.videoanlyze.ColectData.GenerateData;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 
@@ -50,7 +53,7 @@ public class VideoGenerate implements Runnable {
 		}
 
 	}
-	private void GenerateData(String cameraID, String cameraURL,KafkaProducer<String,String>producer ,String topiname) {
+	private void GenerateData(String cameraID, String cameraURL,KafkaProducer<String,String>producer ,String topiname) throws IOException {
 		VideoCapture camera=null;
 		camera = CreateCameraFromUrl.create(cameraURL);
 		try {
@@ -60,6 +63,8 @@ public class VideoGenerate implements Runnable {
 		}
 		Mat frame = new Mat();
 		Gson gson = new Gson();
+		 FileWriter writer = new FileWriter("D:/testout.txt");
+	     BufferedWriter buffer = new BufferedWriter(writer);
 		while(camera.read(frame)) {
 			Imgproc.resize(frame, frame, new Size(640, 480), 0, 0, Imgproc.INTER_CUBIC);
 			int cols = frame.cols();
@@ -76,6 +81,10 @@ public class VideoGenerate implements Runnable {
 	        obj.addProperty("type", type);
 	        obj.addProperty("data", Base64.getEncoder().encodeToString(data));  
 	        String json = gson.toJson(obj);
+	       
+	        buffer.write(json);
+	        buffer.write("\n");
+	        buffer.flush();
 			logger.info("Sending!! "+json);
 		
 			producer.send(new ProducerRecord<String, String>(topiname,cameraID,json),new GenerateCallBack(cameraID));
